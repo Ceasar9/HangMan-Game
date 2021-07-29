@@ -1,6 +1,7 @@
 .vscode/
 
-__pychace__
+__pycahce__
+*.pyc
 
 test
 
