@@ -14,3 +14,15 @@ def sample_people_data():
             "title": "Project Manager",
         },
     ]
+
+def sample_user_db():
+    return [
+        {
+            'uname':'Behzad',
+            'password':123
+        },
+        {
+            'uname':'aaa',
+            'password':125
+        }
+    ]
