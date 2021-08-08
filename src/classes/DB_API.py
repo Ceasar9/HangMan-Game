@@ -73,7 +73,7 @@ def add_user_to_db(uname, pw):
     # ...
     sample_db.append({'uname':uname, 'password':pw})
     user_added = True
-    print(sample_db)
+    print("All Users:",[ user['uname'] for i, user in enumerate(sample_db)], end='\n')
 
     if user_added == True:
         return True
