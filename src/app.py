@@ -3,6 +3,7 @@ from src.classes.DB_API import add_user_to_db, check_valid_access, check_user_ex
 
 from src.classes.Player import Player
 from src.classes.WordGenerator import FakeWordGenerator
+import os
 import re
 
 def format_data_for_display(sample_people_data):
@@ -49,40 +50,48 @@ def game_loop(uname=None):
     correct_guess_flag = None
     display_board = [c if c == ' ' else '-' for c in secret_word ]
     correct_guess_list = []
-    count = 0
+    count = -1
     num_wrong_guessed = 0
+    wrong_guess_list=[]
+    usr_guess = ""
+    input('Press Enter to Start the Game...')
+    os.system('clear')
     while player.get_remianed_chances() > 0:
-        usr_guess = input('Please Enter your next guess:')
+        if count == 0:
+            usr_guess = input('\n Please Enter your first guess [a-z]:')
+        elif count > 0:
+            usr_guess = input('\nPlease Enter your next guess [a-z]:')
+        os.system('clear')
         usr_guess = str(usr_guess).upper()
-        if re.match(r'[a-zA-Z]', usr_guess) and usr_guess in secret_word:
-            correct_guess_flag = True
-            player.set_current_guess(guessed_letter=usr_guess, correct_guess=correct_guess_flag)
-            correct_guess_list.append(usr_guess)
+        if (re.match(r'[a-zA-Z]', usr_guess)) and (usr_guess not in wrong_guess_list) and (usr_guess not in correct_guess_list):
+            if usr_guess in secret_word:
+                correct_guess_flag = True
+                player.set_current_guess(guessed_letter=usr_guess, correct_guess=correct_guess_flag)
+                correct_guess_list.append(usr_guess)
             
-        elif re.match(r'[a-zA-Z]', usr_guess) and usr_guess not in secret_word:
-            correct_guess_flag = False
-            player.set_current_guess(guessed_letter=usr_guess, correct_guess=correct_guess_flag)
-            num_wrong_guessed+=1
+            elif usr_guess not in secret_word:
+                correct_guess_flag = False
+                player.set_current_guess(guessed_letter=usr_guess, correct_guess=correct_guess_flag)
+                num_wrong_guessed = len(secret_word) - player.get_remianed_chances()
+                wrong_guess_list.append(usr_guess)
 
-        if len(usr_guess) == 1 and isinstance(usr_guess, str):
-            all_indices = [x.start() for x in re.finditer(usr_guess, secret_word)]
-            for i in range(len(secret_word)):
-                if i in all_indices:
-                    display_board[i] = usr_guess
-                
-        
-
-
-        
+            if len(usr_guess) == 1 and isinstance(usr_guess, str):
+                all_indices = [x.start() for x in re.finditer(usr_guess, secret_word)]
+                for i in range(len(secret_word)):
+                    if i in all_indices:
+                        display_board[i] = usr_guess
+      
         correct_guess_flag = None
         count+=1
         print('Guess-{} Finished...'.format(count))
-        print('Guessed Letters are:{}'.format(player.get_guessed_letter()))
-        print('Number of Chances left: {}'.format(player.get_remianed_chances()))
+        print('Guessed Letters:{}'.format(player.get_guessed_letter()))
+        print('Chances left: {}'.format(player.get_remianed_chances()))
         print('\n\n|-------------|\n| BOARD GAME: | \n|-------------|\n\n ***{}***\n\n============\n\n'.format(''.join(display_board)))
-
-        if '-' not in ''.join(display_board):
+        
+        if '-' not in ''.join(display_board) and ''.join(display_board) == secret_word:
             print('Wiiiiiiiiiiiiiiiin!!! :D\n\n')
+            break
         if num_wrong_guessed == len(secret_word):
             print('GameOver')
             break
+        
