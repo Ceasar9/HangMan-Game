@@ -50,7 +50,7 @@ class Player(Person):
         if correct_guess != None and correct_guess == False:
             self.__remained_chances -= 1
         if self.__remained_chances == 0:
-            return "GAME OVER"
+            print('remained chances : 0')
             
 
     def get_remianed_chances(self):
